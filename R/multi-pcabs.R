@@ -37,6 +37,7 @@ lead_abs <- function(pdag, abs_groups){
       if((z+1) <= length(abs_groups)){
         absList <- find_edge_between_groups(pdag, abs_groups[[i]], abs_groups[[z+1]])
         if(length(absList$abs_group1) > 0){
+          cat("\nfound connecting edges")
           group1 <- noquote(gsub("[^0-9]","", absList$abs_group1))
           group2 <- noquote(gsub("[^0-9]","", absList$abs_group2))
           dir_list <- check_directed_edges(pdag, group1, group2)
@@ -54,8 +55,22 @@ lead_abs <- function(pdag, abs_groups){
   }
   if(length(undirected_list) > 0){
     cat("\nstart with undirected list")
-    for(i in seq(1, length(undirected_list), by=2)){
-      pdag <- add_abstraction(pdag, undirected_list[i]$abs_group1, undirected_list[i+1]$abs_group2)
+    print(length(undirected_list))
+    pdag_changed <- FALSE
+    repeat{
+      for(i in seq(1, length(undirected_list), by=2)){
+        new_pdag <- add_abstraction(pdag, undirected_list[i]$abs_group1, undirected_list[i+1]$abs_group2)
+        if(all(new_pdag != "both_directions_possible")){
+          pdag_changed <- TRUE
+          pdag <- new_pdag
+          undirected_list[i] <- NULL
+          undirected_list[i] <- NULL
+        }
+      }
+      if(length(undirected_list) == 0 || pdag_changed == FALSE)
+        break
+      else
+        pdag_changed <- FALSE
     }
   }
   # check for cycles on the highlevel!
@@ -70,7 +85,43 @@ lead_abs <- function(pdag, abs_groups){
   }
 }
 
+#######
 
+x1 <- rnorm(2000)
+x2 <- x1 + rnorm(2000)
+x3 <- x1 + rnorm(2000)
+x4 <- x2 + rnorm(2000)
+x5 <- x3 + rnorm(2000)
+x6 <- x3 + rnorm(2000)
+x7 <- x4 + rnorm(2000)
+x8 <- x5 + rnorm(2000)
+x9 <- x6 + rnorm(2000)
+x10 <- x7 + x8 + rnorm(2000)
+x11 <- x9 + rnorm(2000)
+dat <- cbind(x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11)
+
+labels <- colnames(dat)
+n <- nrow(dat)
+
+skel <- skeleton(suffStat = list(C = cor(dat), n=n),
+                 indepTest = gaussCItest, alpha = 0.01,
+                 labels = labels, verbose = TRUE)
+plot(skel)
+
+pdag <- find_pattern(skel)
+
+a = list("x1", "x2", "x3", "x4", "x5", "x6")
+b = list("x7", "x8", "x9")
+c = list("x10", "x11")
+abs_groups = list(a, b, c)
+abs_groups
+
+pdag2 <- lead_abs(pdag, abs_groups)
+pdag2
+test2 <- as(pdag2, "graphNEL")
+plot(test2)
+
+#######
 
 ## Directing leading function ("the directing part")
 ## directs the edges between a pair of clusters
@@ -104,21 +155,8 @@ add_abstraction <- function(pdag, abs_group1, abs_group2){
 
     if(dir1 && dir2){
       #this means that both directions are possible
-      #we check if there are any necessary edges among them (that are directed in both cases)
-
-      end_pdag_list <- list()
-      col <- ncol(pdag)
-      row <- nrow(pdag)
-      for(i in 1:length(pdag)){
-        if(pdag1[i] == 0 && pdag2[i] == 0){
-          end_pdag_list[i] = 0
-        }
-        else{
-          end_pdag_list[i] = 1
-        }
-      }
-      end_pdag <- matrix(end_pdag_list, nrow=row, ncol=col)
-      return(end_pdag)
+      #we return the message "both_directions_possible"
+      return("both_directions_possible")
     }
     if(dir1 && !dir2){
       #this means that the direction abs_group1 --> abs_group2 is the only possible direction
