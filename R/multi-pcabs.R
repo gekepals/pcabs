@@ -1,12 +1,5 @@
 ######
 
-# Code to construct the pcabs-Class
-# This is the class between the Markov Equivalence Class (MEC)
-# and the Markov tau-Abstraction Equivalence Class (MAEC)
-# The pcabs-Class only removes models on which a constructive tau-abstraction is not possible
-# However, it can not be guaranteed that a constructive tau-abstraction is possible
-# on all models in the pcabs-Class
-
 # The code is divided in two parts:
 # 1. The two main functions lead_abs() and add_abstraction()
 # 2. The helping functions
