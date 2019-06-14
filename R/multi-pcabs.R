@@ -78,43 +78,6 @@ lead_abs <- function(pdag, abs_groups){
   }
 }
 
-#######
-
-x1 <- rnorm(2000)
-x2 <- x1 + rnorm(2000)
-x3 <- x1 + rnorm(2000)
-x4 <- x2 + rnorm(2000)
-x5 <- x3 + rnorm(2000)
-x6 <- x3 + rnorm(2000)
-x7 <- x4 + rnorm(2000)
-x8 <- x5 + rnorm(2000)
-x9 <- x6 + rnorm(2000)
-x10 <- x7 + x8 + rnorm(2000)
-x11 <- x9 + rnorm(2000)
-dat <- cbind(x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11)
-
-labels <- colnames(dat)
-n <- nrow(dat)
-
-skel <- skeleton(suffStat = list(C = cor(dat), n=n),
-                 indepTest = gaussCItest, alpha = 0.01,
-                 labels = labels, verbose = TRUE)
-plot(skel)
-
-pdag <- find_pattern(skel)
-
-a = list("x1", "x2", "x3", "x4", "x5", "x6")
-b = list("x7", "x8", "x9")
-c = list("x10", "x11")
-abs_groups = list(a, b, c)
-abs_groups
-
-pdag2 <- lead_abs(pdag, abs_groups)
-pdag2
-test2 <- as(pdag2, "graphNEL")
-plot(test2)
-
-#######
 
 ## Directing leading function ("the directing part")
 ## directs the edges between a pair of clusters
