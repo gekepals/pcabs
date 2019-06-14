@@ -5,7 +5,7 @@ This code adds information about a constructive tau-abstraction to the Markov Eq
 This allows the code to direct edges that were undirected in the Markov Equivalence Class. 
 The output of the code is the Markov Abstraction Equivalence Class.
 The code removes all models on which a constructive tau-abstraction is not possible. This means that on all models that are left in the Markov Abstraction Equivalence Class, a constructive tau-abstraction is possible. 
-See Geke Pals, *Abstracting Causal Models to create Markov Abstraction Equivalence Classes* (2019) for more details. 
+See Geke Pals, *Markov Abstraction Equivalence Classes: Combining the Markov Equivalence Class and Constructive tau-Abstraction to restrict the number of Causal Models* (2019) for more details, provided in this folder as pdf. 
 
 # How to use pcabs
 With the following code, the Markov Abstraction Equivalence Class will be created.
